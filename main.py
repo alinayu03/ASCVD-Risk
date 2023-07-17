@@ -151,6 +151,8 @@ def calculate(sex, race, treated_BP, age, cl, HDLC, BP, smoker, diabetes):
 
 def main():
     st.title("ASCVD Calculator")
+    st.markdown(
+        "[Evidence](https://www.ahajournals.org/doi/pdf/10.1161/01.cir.0000437741.48606.98)")
     st.write("Enter the required information:")
 
     sex = st.selectbox("Sex", ["Man", "Woman"])
