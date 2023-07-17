@@ -157,11 +157,11 @@ def main():
 
     sex = st.selectbox("Sex", ["Man", "Woman"])
     race = st.selectbox("Race", ["White", "Black", "Other"])
-    treated_BP = st.checkbox("Treated BP")
+    treated_BP = st.checkbox("Treatment for hypertension")
     age = st.number_input("Age", value=40, min_value=1)
-    cl = st.number_input("Cl", value=200, min_value=1)
-    HDLC = st.number_input("HDLC", value=50, min_value=1)
-    BP = st.number_input("BP", value=120, min_value=1)
+    cl = st.number_input("Total cholesterol mg/dL", value=200, min_value=1)
+    HDLC = st.number_input("HDL cholesterol ml/dL", value=50, min_value=1)
+    BP = st.number_input("Systolic blood pressure mm Hg", value=120, min_value=1)
     smoker = int(st.checkbox("Smoker"))
     diabetes = int(st.checkbox("Diabetes"))
 
