@@ -4,9 +4,9 @@ import pandas as pd
 
 def calculate(sex, race, treated_BP, age, cl, HDLC, BP, smoker, diabetes):
 
-    # Coefficient values
+    # Variable values by sex and race
     if sex == 'Woman':
-        if race == "White":
+        if race == "White" or race == "Other":
             coefficients = {
                 'age': -29.799,
                 'cl': 13.540,
@@ -25,13 +25,63 @@ def calculate(sex, race, treated_BP, age, cl, HDLC, BP, smoker, diabetes):
             baseline_survival = 0.9665
             overall_mean_sum = -29.18
         elif race == "Black":
-            coefficients = {}
+            coefficients = {
+                'age': 17.114,
+                'cl': 0.940,
+                'HDLC': -18.920,
+                'BP': 29.291 if treated_BP else 27.820,
+                'smoker': 0.691,
+                'diabetes': 0.874
+            }
+            interaction_coefficients = {
+                'lnage_x_lnage': 0,
+                'lnage_x_lncl': 0,
+                'lnage_x_lnHDCL': 4.475,
+                'lnage_x_lnBP': -6.432 if treated_BP else -6.087,
+                'lnage_x_smoker': 0.691,
+            }
+            baseline_survival = 0.9533
+            overall_mean_sum = 86.61
     elif sex == "Man":
-        if race == "White":
-            coefficients = {}
+        if race == "White" or race == "Other":
+            coefficients = {
+                'age': 12.344,
+                'cl': 11.853,
+                'HDLC': -7.990,
+                'BP': 1.797 if treated_BP else 1.764,
+                'smoker': 7.837,
+                'diabetes': 0.658
+            }
+            interaction_coefficients = {
+                'lnage_x_lnage': 0,
+                'lnage_x_lncl': -2.664,
+                'lnage_x_lnHDCL': 1.769,
+                'lnage_x_lnBP': 0,
+                'lnage_x_smoker': -1.795,
+            }
+            baseline_survival = 0.9144
+            overall_mean_sum = 61.18
         elif race == "Black":
-            coefficients = {}
+            coefficients = {
+                'age': 2.469,
+                'cl': 0.302,
+                'HDLC': -0.307,
+                'BP': 1.916 if treated_BP else 1.809,
+                'smoker': 0.549,
+                'diabetes': 0.645
+            }
+            interaction_coefficients = {
+                'lnage_x_lnage': 0,
+                'lnage_x_lncl': 0,
+                'lnage_x_lnHDCL': 0,
+                'lnage_x_lnBP': 0,
+                'lnage_x_smoker': 0,
+            }
+            baseline_survival = 0.8954
+            overall_mean_sum = 19.54
     
+    # Algorithm
+
     # Calculate natural logs of input variables
     ln_age, ln_cl, ln_HDLC, ln_BP = np.log(np.array([age, cl, HDLC, BP]))
     
@@ -67,38 +117,40 @@ def calculate(sex, race, treated_BP, age, cl, HDLC, BP, smoker, diabetes):
     # Calculate 10 year risk of ASCVD
     risk = 1 - baseline_survival ** np.exp(individual_sum - overall_mean_sum)
 
-    # Debugging
-    st.subheader("Calculation Results:")
-    st.write("Coefficient Values:")
-    df_coefficients = pd.DataFrame.from_dict(
-        coefficients, orient='index', columns=['Coefficient'])
-    st.write(df_coefficients)
+    # # Debugging
+    # st.subheader("Calculation Results:")
+    # st.write("Coefficient Values:")
+    # df_coefficients = pd.DataFrame.from_dict(
+    #     coefficients, orient='index', columns=['Coefficient'])
+    # st.write(df_coefficients)
 
-    st.write("Interaction Coefficients:")
-    df_interaction = pd.DataFrame.from_dict(
-        interaction_coefficients, orient='index', columns=['Coefficient'])
-    st.write(df_interaction)
+    # st.write("Interaction Coefficients:")
+    # df_interaction = pd.DataFrame.from_dict(
+    #     interaction_coefficients, orient='index', columns=['Coefficient'])
+    # st.write(df_interaction)
 
-    st.write("Natural Logarithm of Variables:")
-    df_ln_x = pd.DataFrame(ln_x_coefficients, index=[
-                           'ln_age', 'ln_cl', 'ln_HDLC', 'ln_BP', 'smoker', 'diabetes'], columns=['Value'])
-    st.write(df_ln_x)
+    # st.write("Natural Logarithm of Variables:")
+    # df_ln_x = pd.DataFrame(ln_x_coefficients, index=[
+    #                        'ln_age', 'ln_cl', 'ln_HDLC', 'ln_BP', 'smoker', 'diabetes'], columns=['Value'])
+    # st.write(df_ln_x)
 
-    st.write("Interaction Terms:")
-    df_interaction_terms = pd.DataFrame(interaction_terms, index=[
-                                        'lnage_x_lnage', 'lnage_x_lncl', 'lnage_x_lnHDCL', 'lnage_x_lnBP', 'lnage_x_smoker'], columns=['Value'])
-    st.write(df_interaction_terms)
+    # st.write("Interaction Terms:")
+    # df_interaction_terms = pd.DataFrame(interaction_terms, index=[
+    #                                     'lnage_x_lnage', 'lnage_x_lncl', 'lnage_x_lnHDCL', 'lnage_x_lnBP', 'lnage_x_smoker'], columns=['Value'])
+    # st.write(df_interaction_terms)
 
-    st.write("Individual Sum:")
-    st.write(individual_sum)
+    # st.write("Individual Sum:")
+    # st.write(individual_sum)
 
-    st.write("10-year Risk of ASCVD:")
-    st.write(risk)
+    # st.write("10-year Risk of ASCVD:")
+    # st.write(risk)
+
+    return risk
 
     
 
 def main():
-    st.title("Coefficient Calculator")
+    st.title("ASCVD Calculator")
     st.write("Enter the required information:")
 
     sex = st.selectbox("Sex", ["Man", "Woman"])
@@ -112,7 +164,8 @@ def main():
     diabetes = int(st.checkbox("Diabetes"))
 
     if st.button("Calculate"):
-        calculate(sex, race, treated_BP, age, cl, HDLC, BP, smoker, diabetes)
+        result = calculate(sex, race, treated_BP, age, cl, HDLC, BP, smoker, diabetes)
+        st.write("Your ASCVD risk is:", result)
 
 
 if __name__ == "__main__":
