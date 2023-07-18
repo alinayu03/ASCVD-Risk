@@ -151,17 +151,18 @@ def calculate(sex, race, treated_BP, age, cl, HDLC, BP, smoker, diabetes):
 
 def main():
     st.title("ASCVD Calculator")
+    st.write("ASCVD (Atherosclerotic Cardiovascular Disease) 2013 Risk Calculator from AHA/ACC. Determines 10-year risk of heart disease or stroke.")
     st.markdown(
         "[Evidence](https://www.ahajournals.org/doi/pdf/10.1161/01.cir.0000437741.48606.98)")
     st.write("Enter the required information:")
 
     sex = st.selectbox("Sex", ["Man", "Woman"])
     race = st.selectbox("Race", ["White", "Black", "Other"])
-    treated_BP = st.checkbox("Treatment for hypertension")
     age = st.number_input("Age", value=40, min_value=1)
     cl = st.number_input("Total cholesterol mg/dL", value=200, min_value=1)
     HDLC = st.number_input("HDL cholesterol ml/dL", value=50, min_value=1)
     BP = st.number_input("Systolic blood pressure mm Hg", value=120, min_value=1)
+    treated_BP = st.checkbox("Treatment for hypertension")
     smoker = int(st.checkbox("Smoker"))
     diabetes = int(st.checkbox("Diabetes"))
 
